@@ -1,18 +1,6 @@
-//::///////////////////////////////////////////////
-//:: Default On Enter for Module
-//:: x3_mod_def_enter
-//:: Copyright (c) 2008 Bioware Corp.
-//:://////////////////////////////////////////////
-/*
-     This script adds the horse menus to the PCs.
-*/
-//:://////////////////////////////////////////////
-//:: Created By: Deva B. Winblood
-//:: Created On: Dec 30th, 2007
-//:: Last Update: April 21th, 2008
-//:://////////////////////////////////////////////
-
 #include "x3_inc_horse"
+#include "inc_nbde"
+#include "inc_gen"
 
 void main()
 {
@@ -34,4 +22,25 @@ void main()
         HorsePreloadAnimations(oPC);
         DelayCommand(3.0,HorseRestoreHenchmenLocations(oPC));
     } // more details
+
+    SendMessageToPC(oPC, "Welcome to " + GetName(GetModule()) + "! " +
+    "Read your journal for updated information about contact and server changes.");
+
+    //If a playername doesn't have a recorded CDKey, new player! Record key.
+    if(NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") == "")
+    {
+        NBDE_SetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY", GetPCPublicCDKey(oPC, TRUE));
+    }
+
+    //If not a new player, and the recorded key doesn't match the current key.. send flag.
+    if(NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") != ""
+    && NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") != GetPCPublicCDKey(oPC, TRUE))
+    {
+        LogMessage("FLAG: Key " + GetPCPublicCDKey(oPC, TRUE) + " attempting to log into account " + GetPCPlayerName(oPC) +
+        ". Valid key of " + GetPCPlayerName(oPC) + " is " + NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY"));
+
+        SendMessageToAllDMs("FLAG: Key " + GetPCPublicCDKey(oPC, TRUE) + " attempting to log into account " + GetPCPlayerName(oPC) +
+        ". Valid key of " + GetPCPlayerName(oPC) + " is " + NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY"));
+    }
+
 }

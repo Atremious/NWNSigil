@@ -11,6 +11,14 @@ void GenerateLoot(object oGenerateIn, string sContainer)
 {
 
     object oContainer = GetObjectByTag(sContainer);
+    int nCount;
+
+    int nLimit = GetLocalInt(oContainer, "LOOT_SPAWN_LIMIT");
+
+    if(nLimit <= 0)
+    {
+        nLimit = 3; //Standard loot limit.
+    }
 
     if(GetIsObjectValid(oContainer))
     {
@@ -18,9 +26,10 @@ void GenerateLoot(object oGenerateIn, string sContainer)
 
         while(GetIsObjectValid(oItem))
         {
-            if(Random(1001)<= (GetLocalInt(oItem, "SPAWN_CHANCE") + LOOT_MODIFIER))
+            if(Random(1001)<= (GetLocalInt(oItem, "SPAWN_CHANCE") + LOOT_MODIFIER) && nCount <= nLimit)
             {
                 CopyItem(oItem, oGenerateIn, TRUE);
+                nCount++;
             }
 
             oItem = GetNextItemInInventory(oContainer);
@@ -42,15 +51,8 @@ Generates gold on a creature.
 void GenerateGold(object oGenerateIn, int nBase = 0, int nRandom = 0);
 void GenerateGold(object oGenerateIn, int nBase = 0, int nRandom = 0)
 {
+    int nGive = nBase + Random(nRandom);
 
-    if(nBase > 0)
-    {
-        CreateItemOnObject("nw_it_gold001", oGenerateIn, nBase);
-    }
-
-    if(nRandom > 0)
-    {
-        CreateItemOnObject("nw_it_gold001", oGenerateIn, Random(nRandom));
-    }
+     CreateItemOnObject("nw_it_gold001", oGenerateIn, nGive);
 
 }

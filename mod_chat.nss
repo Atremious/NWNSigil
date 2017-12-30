@@ -1,5 +1,6 @@
-#include "nwnx_chat"
+//#include "nwnx_chat"
 #include "inc_gen"
+#include "inc_nbde"
 
 //To determine the authority required for a chat command, and the script for it to execute..
 //Modify the appropriate setting Waypoints' variables. See their comments/description.
@@ -22,14 +23,14 @@ int IsTellBlocked(object oSender, object oTarget)
 void main()
 {
     object oPC = GetPCChatSpeaker();
-    string sMsg = GetPCChatMessage();
 
+    string sMsg    = GetPCChatMessage();
     string sAlertO = "<cá!6>";
     string sAlertC = "</c>";
 
     SetLocalString(oPC, "LAST_SAID", sMsg);
 
-    //NWNX Object Variables
+    /*NWNX Object Variables
     object oSender = NWNX_Chat_GetSender();
     object oTarget = NWNX_Chat_GetTarget();
 
@@ -82,6 +83,18 @@ void main()
     {
         AddToParty(oSender, GetLocalObject(oSender, "InvitedBy"));
 
+    }*/
+
+    if(sMsg == "-test")
+    {
+        SendMessageToPC(oPC, "key is " + NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY"));
+    }
+
+    if(sMsg == "-flush")
+    {
+        DelayCommand(1.0, NBDE_FlushCampaignDatabase("PC_DATA"));
+        DelayCommand(3.0, NBDE_FlushCampaignDatabase("PLAYERNAME_DATA"));
+        SendMessageToPC(oPC, "Flushed");
     }
 
 
