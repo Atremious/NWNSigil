@@ -1,22 +1,3 @@
-//:://////////////////////////////////////////////////
-//:: NW_C2_DEFAULT1
-/*
-  Default OnHeartbeat script for NPCs.
-
-  This script causes NPCs to perform default animations
-  while not otherwise engaged.
-
-  This script duplicates the behavior of the default
-  script and just cleans up the code and removes
-  redundant conditional checks.
-
- */
-//:://////////////////////////////////////////////////
-//:: Copyright (c) 2002 Floodgate Entertainment
-//:: Created By: Naomi Novik
-//:: Created On: 12/22/2002
-//:://////////////////////////////////////////////////
-
 #include "nw_i0_generic"
 
 void main()
@@ -109,6 +90,12 @@ void main()
     if(GetLocalInt(OBJECT_SELF, "SIT_FLOOR") == 1)
     {
         AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_SIT_CROSS, 1.0, 3600.0));
+    }
+
+    if(!GetIsInCombat() && GetLocalInt(OBJECT_SELF, "RANDOMWALK_OFF") != 1)
+    {
+        ClearAllActions();
+        ActionRandomWalk();
     }
 }
 
