@@ -13,9 +13,6 @@ void main()
         SetLocalLocation(oHide, "LOCATION", GetLocation(oPC));
         SetLocalInt(oArea, "PLAYER_COUNT", nPlayers++);
 
-        ExecuteScript("ar_enter_not", oPC);
-
-
         if(GetXP(oPC) < 3000)
         {
             ExecuteScript("ar_enter_newpc", oPC);
