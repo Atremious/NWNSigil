@@ -1,35 +1,5 @@
-//:://////////////////////////////////////////////////
-//:: NW_C2_DEFAULT9
-/*
- * Default OnSpawn handler with XP1 revisions.
- * This corresponds to and produces the same results
- * as the default OnSpawn handler in the OC.
- *
- * This can be used to customize creature behavior in three main ways:
- *
- * - Uncomment the existing lines of code to activate certain
- *   common desired behaviors from the moment when the creature
- *   spawns in.
- *
- * - Uncomment the user-defined event signals to cause the
- *   creature to fire events that you can then handle with
- *   a custom OnUserDefined event handler script.
- *
- * - Add new code _at the end_ to alter the initial
- *   behavior in a more customized way.
- */
-//:://////////////////////////////////////////////////
-//:: Copyright (c) 2002 Floodgate Entertainment
-//:: Created By: Naomi Novik
-//:: Created On: 12/11/2002
-//:://////////////////////////////////////////////////
-//:: Updated 2003-08-20 Georg Zoeller: Added check for variables to active spawn in conditions without changing the spawnscript
-
-
 #include "x0_i0_anims"
-// #include "x0_i0_walkway" - in x0_i0_anims
 #include "x0_i0_treasure"
-
 #include "x2_inc_switches"
 
 void main()
@@ -286,14 +256,6 @@ void main()
     // * The night "posting" waypoint tag is simply "NIGHT_" + NPC tag.
     WalkWayPoints();
 
-    //* Create a small amount of treasure on the creature
-    if ((GetLocalInt(GetModule(), "X2_L_NOTREASURE") == FALSE)  &&
-        (GetLocalInt(OBJECT_SELF, "X2_L_NOTREASURE") == FALSE)   )
-    {
-        CTG_GenerateNPCTreasure(TREASURE_TYPE_MONSTER, OBJECT_SELF);
-    }
-
-
     // ***** ADD ANY SPECIAL ON-SPAWN CODE HERE ***** //
 
     // * If Incorporeal, apply changes
@@ -321,5 +283,15 @@ void main()
             sName = RandomName();
         }
         SetName(OBJECT_SELF,sName);
+    }
+
+    if(GetLocalInt(OBJECT_SELF, "POST"))
+    {
+       float fFacing = GetFacing(OBJECT_SELF);
+       object oDay   = CreateObject(OBJECT_TYPE_WAYPOINT, "nw_waypoint001", GetLocation(OBJECT_SELF), FALSE, "POST_" + GetTag(OBJECT_SELF));
+       object oNight = CreateObject(OBJECT_TYPE_WAYPOINT, "nw_waypoint001", GetLocation(OBJECT_SELF), FALSE, "NIGHT_" + GetTag(OBJECT_SELF));
+
+       AssignCommand(oDay, SetFacing(fFacing));
+       AssignCommand(oNight, SetFacing(fFacing));
     }
 }

@@ -1,5 +1,4 @@
 #include "nw_i0_generic"
-
 void main()
 {
     // * if not runnning normal or better Ai then exit for performance reasons
@@ -82,20 +81,25 @@ void main()
         SignalEvent(OBJECT_SELF, EventUserDefined(EVENT_HEARTBEAT));
     }
 
-    if(GetLocalInt(OBJECT_SELF, "SIT") == 1)
+    if(!GetIsInCombat(OBJECT_SELF))
     {
-        AssignCommand(OBJECT_SELF, ActionSit(GetNearestObjectByTag("SEAT")));
-    }
 
-    if(GetLocalInt(OBJECT_SELF, "SIT_FLOOR") == 1)
-    {
-        AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_SIT_CROSS, 1.0, 3600.0));
-    }
+        if(GetLocalInt(OBJECT_SELF, "SIT"))
+        {
+            AssignCommand(OBJECT_SELF, ActionSit(GetNearestObjectByTag("SEAT")));
+        }
 
-    if(!GetIsInCombat() && GetLocalInt(OBJECT_SELF, "RANDOMWALK_OFF") != 1)
-    {
-        ClearAllActions();
-        ActionRandomWalk();
+        if(GetLocalInt(OBJECT_SELF, "SIT_FLOOR"))
+        {
+            AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_SIT_CROSS, 1.0, 3600.0));
+        }
+
+        if(GetLocalInt(OBJECT_SELF, "SLEEP"))
+        {
+            ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SLEEP), OBJECT_SELF);
+            AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_DEAD_BACK, 1.0, 3600.0));
+        }
     }
 }
+
 
