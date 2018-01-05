@@ -1,6 +1,6 @@
 #include "x3_inc_horse"
-#include "inc_nbde"
 #include "inc_gen"
+#include "inc_quest"
 
 void main()
 {
@@ -26,21 +26,12 @@ void main()
     SendMessageToPC(oPC, "Welcome to " + GetName(GetModule()) + "! " +
     "Read your journal for updated information about contact and server changes.");
 
-    //If a playername doesn't have a recorded CDKey, new player! Record key.
-    if(NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") == "")
-    {
-        NBDE_SetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY", GetPCPublicCDKey(oPC, TRUE));
-    }
+    int nPlayers  = GetLocalInt(OBJECT_SELF, "PLAYER_COUNT");
+    SetLocalInt(OBJECT_SELF, "PLAYER_COUNT", nPlayers++);
 
-    //If not a new player, and the recorded key doesn't match the current key.. send flag.
-    if(NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") != ""
-    && NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") != GetPCPublicCDKey(oPC, TRUE))
-    {
-        LogMessage("FLAG: Key " + GetPCPublicCDKey(oPC, TRUE) + " attempting to log into account " + GetPCPlayerName(oPC) +
-        ". Valid key of " + GetPCPlayerName(oPC) + " is " + NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY"));
+              //123456789112345
+    LogMessage("[PLAYERCOUNT]: " + IntToString(GetLocalInt(OBJECT_SELF, "PLAYER_COUNT")));
 
-        SendMessageToAllDMs("FLAG: Key " + GetPCPublicCDKey(oPC, TRUE) + " attempting to log into account " + GetPCPlayerName(oPC) +
-        ". Valid key of " + GetPCPlayerName(oPC) + " is " + NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY"));
-    }
+    DoJournalUpdate(oPC);
 
 }

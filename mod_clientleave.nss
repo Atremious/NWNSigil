@@ -1,4 +1,5 @@
 #include "inc_nbde"
+#include "inc_gen"
 void main()
 {
     object oPC = GetExitingObject();
@@ -8,14 +9,9 @@ void main()
     string sPlayer = GetPCPlayerName(oPC);
 
     int nXP = GetXP(oPC);
-    int nLeaveCount = GetLocalInt(OBJECT_SELF, "LEAVE_COUNT");
 
-    nLeaveCount++;
+    int nPlayers  = GetLocalInt(OBJECT_SELF, "PLAYER_COUNT");
+    SetLocalInt(OBJECT_SELF, "PLAYER_COUNT", nPlayers--);
 
-    if(nLeaveCount == 5)
-    {
-        SetLocalInt(OBJECT_SELF, "LEAVE_COUNT", 0);
-        DelayCommand(5.0, NBDE_FlushCampaignDatabase("PLAYERNAME_DATA"));
-    }
-
+    LogMessage("[PLAYERCOUNT]: " + IntToString(GetLocalInt(OBJECT_SELF, "PLAYER_COUNT")));
 }

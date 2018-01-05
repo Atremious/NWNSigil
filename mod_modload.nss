@@ -50,4 +50,3 @@ void main()
     // * Spellcasting: Some people don't like caster's abusing expertise to raise their AC
     // * Uncommenting this line will drop expertise mode whenever a spell is cast by a player
     // SetModuleSwitch (MODULE_VAR_AI_STOP_EXPERTISE_ABUSE, TRUE);
-

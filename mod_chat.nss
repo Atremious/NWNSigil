@@ -1,9 +1,7 @@
-//#include "nwnx_chat"
+#include "nwnx_chat"
 #include "inc_gen"
-#include "inc_nbde"
+#include "inc_text"
 
-//To determine the authority required for a chat command, and the script for it to execute..
-//Modify the appropriate setting Waypoints' variables. See their comments/description.
 string GetChatScript(string sMsg);
 string GetChatScript(string sMsg)
 {
@@ -12,102 +10,220 @@ string GetChatScript(string sMsg)
     return GetLocalString(oData, GetStringLowerCase(sMsg));
 }
 
+void ExamineChatCommand(object oPC, string sCommand);
+void ExamineChatCommand(object oPC, string sCommand)
+{
+    sCommand = GetStringUpperCase(sCommand);
+    sCommand = GetSubString(sCommand, 1, GetStringLength(sCommand));
+    sCommand = GetSubString(sCommand, 0, GetStringLength(sCommand) - 1);
+
+    string sVar = GetLocalString(GetObjectByTag("DATA_CHAT_DESC"), GetStringLowerCase(sCommand));
+
+    object Examine = GetObjectByTag(sVar);
+    SetLocalObject(oPC, "EXAMINE", Examine);
+
+    AssignCommand(oPC, ClearAllActions());
+    AssignCommand(oPC, ActionExamine(GetLocalObject(oPC, "EXAMINE")));
+}
+
 //Returns true of oTarget has oSender tell blocked.
 int IsTellBlocked(object oSender, object oTarget);
 int IsTellBlocked(object oSender, object oTarget)
 {
-    return FALSE; //TODO: FIX!!!
+    object oHide  = GetItemInSlot(INVENTORY_SLOT_CARMOUR, oTarget);
+
+    if(GetLocalInt(oHide, "TL_" + GetPCPlayerName(oSender)))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+string GetVolumePrefix(int NWNX)
+{
+    string sVol;
+
+    if(NWNX == 0)
+    {
+        switch(GetPCChatVolume())
+        {
+            case TALKVOLUME_TALK:
+
+                sVol = "T";
+
+            break;
+
+            case TALKVOLUME_WHISPER:
+
+                sVol = "W";
+
+            break;
+
+            case TALKVOLUME_PARTY:
+
+                sVol = "P";
+
+            break;
+
+            case TALKVOLUME_SHOUT:
+
+                sVol = "S";
+
+            break;
+
+            case TALKVOLUME_SILENT_TALK:
+
+                sVol = "DM";
+
+            break;
+        }
+    }
+
+    if(NWNX == 1)
+    {
+        switch(NWNX_Chat_GetChannel())
+        {
+            case NWNX_CHAT_CHANNEL_DM_DM:
+
+                sVol = "DM";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_PLAYER_DM:
+
+                sVol = "DM";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_DM_PARTY:
+
+                sVol = "P";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_PLAYER_PARTY:
+
+                sVol = "P";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_DM_SHOUT:
+
+                sVol = "S";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_PLAYER_SHOUT:
+
+                sVol = "S";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_DM_TALK:
+
+                sVol = "T";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_PLAYER_TALK:
+
+                sVol = "T";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_DM_TELL:
+
+                sVol = "TL";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_PLAYER_TELL:
+
+                sVol = "TL";
+
+            break;
+
+
+            case NWNX_CHAT_CHANNEL_DM_WHISPER:
+
+                sVol = "W";
+
+            break;
+
+            case NWNX_CHAT_CHANNEL_PLAYER_WHISPER:
+
+                sVol = "W";
+
+            break;
+        }
+    }
+
+    return sVol;
 }
 
 
 void main()
 {
-    object oPC = GetPCChatSpeaker();
+    int NWNX;
+    int nChannel = NWNX_Chat_GetChannel();
 
-    string sMsg    = GetPCChatMessage();
-    string sAlertO = "<cá!6>";
-    string sAlertC = "</c>";
+    object oPC      = GetPCChatSpeaker();
+    object oTarget  = NWNX_Chat_GetTarget();
 
-    SetLocalString(oPC, "LAST_SAID", sMsg);
+    string sMessage = NWNX_Chat_GetMessage();
 
-    /*NWNX Object Variables
-    object oSender = NWNX_Chat_GetSender();
-    object oTarget = NWNX_Chat_GetTarget();
+    string sArea    = GetName(GetArea(oPC));
+    string sVolume;
 
-    //Skip the message if oTarget has oSender tell-blocked, or if they've disabled tells entirely.
-    if(NWNX_Chat_GetChannel() == NWNX_CHAT_CHANNEL_PLAYER_TELL)
+    if(GetStringLength(sMessage) < 1)
     {
-        if(!GetSettingOn(oTarget, "Tells") && !GetIsDM(oSender))
+        NWNX = 0;
+        nChannel = GetPCChatVolume();
+        sMessage = GetPCChatMessage();
+    }
+
+    sVolume  = GetVolumePrefix(NWNX);
+
+    SetLocalString(oPC, "LAST_SAID", sMessage);
+
+    if(GetSubString(sMessage, GetStringLength(sMessage) - 1, GetStringLength(sMessage)) == "?" && GetSubString(sMessage, 0, 1) == "-")
+    {
+        SetPCChatMessage("");
+        ExamineChatCommand(oPC, sMessage);
+        return;
+    }
+
+    if(sVolume == "TL")//Tells
+    {
+        if(IsTellBlocked(oPC, oTarget) && !GetIsDM(oPC) || GetSettingOn(oTarget, "Disable Tells") && !GetIsDM(oPC))
         {
             NWNX_Chat_SkipMessage();
+            return;
         }
 
-        if(IsTellBlocked(oSender, oTarget))
+        if(GetSubString(sMessage, 0, 1) == "-")
         {
             NWNX_Chat_SkipMessage();
+            SetLocalObject(oPC, "TELL_TARGET", oPC);
+            ExecuteScript(GetChatScript(sMessage), oPC);
         }
-
-        //TODO: Have tells play a sound for ONLY oTarget if they have the setting configured.
-
     }
 
-    //NWNX Specific Chat Commands
-
-    if(GetStringLowerCase(sMsg) == "-invite" && NWNX_Chat_GetChannel() == NWNX_CHAT_CHANNEL_PLAYER_TELL)
+    if(sVolume != "TL")//Not Tells: DM, Talk, Party, Shout, Whisper
     {
-
-        if(GetIsObjectValid(oTarget))
+        if(GetSubString(sMessage, 0, 1) == "-")
         {
-            SendMessageToPC(oTarget, sAlertO + GetName(oSender) + " has invited you to their party." +
-            " To accept, use the chat command -accept." + sAlertC);
+            SetPCChatMessage("");
+            ExecuteScript(GetChatScript(sMessage), oPC);
 
-        //TODO: Have -invite play a sound for ONLY oTarget if they have the setting configured.
-
-            SetTimedLocalObject(oTarget, "InvitedBy", oSender, 30.0);
-            SetCooldown(oSender, "-invite", 5.0);
+            SendMessageToPC(oPC, "Running " + GetChatScript(sMessage));
         }
 
-        if(!GetIsObjectValid(oTarget))
+        if(nChannel == NWNX_CHAT_CHANNEL_DM_SHOUT && !GetIsDM(oPC) || nChannel == TALKVOLUME_SHOUT && !GetIsDM(oPC))
         {
-            SendMessageToPC(oSender, sAlertO + "To use this command, send the chat command -invite as a tell " +
-            "to another player." + sAlertC);
+            SetPCChatMessage("");
+            PCShoutMessage(oPC, sMessage);
         }
-
-        if(GetIsOnCooldown(oSender, "-invite"))
-        {
-            SendMessageToPC(oSender,"You cannot use this command yet.");
-        }
-    }
-
-    if(GetStringLowerCase(sMsg) == "-accept" && GetIsObjectValid(GetLocalObject(oSender, "InvitedBy")))
-    {
-        AddToParty(oSender, GetLocalObject(oSender, "InvitedBy"));
-
-    }*/
-
-    if(sMsg == "-test")
-    {
-        SendMessageToPC(oPC, "key is " + NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY"));
-    }
-
-    if(sMsg == "-flush")
-    {
-        DelayCommand(1.0, NBDE_FlushCampaignDatabase("PC_DATA"));
-        DelayCommand(3.0, NBDE_FlushCampaignDatabase("PLAYERNAME_DATA"));
-        SendMessageToPC(oPC, "Flushed");
-    }
-
-
-    //Normal Chat Commands
-    if(GetSubString(sMsg, 0, 1) == "-")
-    {
-        ExecuteScript(GetChatScript(sMsg), oPC);
-        SetPCChatMessage("");
-    }
-
-    if(GetPCChatVolume() == TALKVOLUME_SHOUT && !GetIsDM(oPC))
-    {
-        SendMessageToPC(oPC, "Shout is currently disabled.");
-        SetPCChatMessage("");
     }
 }

@@ -1,4 +1,4 @@
-#include "inc_nbde"
+#include "inc_text"
 
 void main()
 {
@@ -13,10 +13,14 @@ void main()
         SetLocalLocation(oHide, "LOCATION", GetLocation(oPC));
         SetLocalInt(oArea, "PLAYER_COUNT", nPlayers++);
 
+        ExecuteScript("ar_enter_not", oPC);
+
+
         if(GetXP(oPC) < 3000)
         {
             ExecuteScript("ar_enter_newpc", oPC);
         }
+
 
         object oNPC;
         if(GetLocalInt(oArea, "ACTIVE") == 0)
@@ -29,13 +33,6 @@ void main()
                 SetAILevel(oNPC, AI_LEVEL_DEFAULT);
                 oNPC = GetNextObjectInArea(oArea);
             }
-
-        }
-
-        if(NBDE_GetCampaignString("PLAYERNAME_DATA", GetPCPlayerName(oPC) + "_KEY") != GetPCPublicCDKey(oPC))
-        {
-            FloatingTextStringOnCreature("Invalid CDKey - Booting", oPC, FALSE);
-            DelayCommand(1.0, BootPC(oPC));
         }
 
     }
