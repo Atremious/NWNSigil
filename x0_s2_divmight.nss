@@ -19,12 +19,7 @@ void main()
 
         int nLevel         = GetCasterLevel(OBJECT_SELF);
         int nCharismaBonus = GetAbilityModifier(ABILITY_CHARISMA);
-        int nCap           = GetLevelByClass(CLASS_TYPE_PALADIN, oPC) + GetLevelByClass(CLASS_TYPE_BLACKGUARD, oPC) + GetLevelByClass(CLASS_TYPE_CLERIC, oPC);
-
-        if(nCharismaBonus > nCap)
-        {
-            nCharismaBonus = nCap;
-        }
+        int nCap           = GetLevelByClass(CLASS_TYPE_PALADIN, oPC) + GetLevelByClass(CLASS_TYPE_BLACKGUARD, oPC) + GetLevelByClass(CLASS_TYPE_CLERIC, oPC) + GetLevelByClass(32, oPC);
 
         if (nCharismaBonus>0)
         {
@@ -41,13 +36,10 @@ void main()
             SignalEvent(oTarget, EventSpellCastAt(OBJECT_SELF, SPELL_DIVINE_MIGHT, FALSE));
 
             //Apply Link and VFX effects to the target
-            ApplyEffectToObject(DURATION_TYPE_TEMPORARY, eLink, oTarget, RoundsToSeconds(nCharismaBonus));
+            ApplyEffectToObject(DURATION_TYPE_TEMPORARY, eLink, oTarget, RoundsToSeconds(nCap));
             ApplyEffectToObject(DURATION_TYPE_INSTANT, eVis, oTarget);
         }
 
         DecrementRemainingFeatUses(OBJECT_SELF, FEAT_TURN_UNDEAD);
     }
 }
-
-
-
