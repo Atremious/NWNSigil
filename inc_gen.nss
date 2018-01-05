@@ -1,3 +1,4 @@
+#include "inc_text"
 //Includes general scripting commands.
 
 /*////////////////////////////////////////////|
@@ -66,6 +67,19 @@ int GetSettingOn(object oPC, string sSetting)
         {
             return FALSE;
         }
+}
+
+void RecreateObject(object oRecreate);
+void RecreateObject(object oRecreate)
+{
+    location lRec = GetLocation(oRecreate);
+
+    if(GetLocalString(oRecreate, "RECREATE_WP") != "")
+    {
+       lRec = GetLocation(GetObjectByTag(GetLocalString(oRecreate, "RECREATE_WP")));
+    }
+
+    object oNew = CreateObject(OBJECT_TYPE_CREATURE, GetResRef(oRecreate), lRec);
 }
 
 
