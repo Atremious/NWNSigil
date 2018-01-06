@@ -99,6 +99,12 @@ void main()
             ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SLEEP), OBJECT_SELF);
             AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_DEAD_BACK, 1.0, 3600.0));
         }
+
+        if(!GetIsInCombat() && GetLocalInt(OBJECT_SELF, "RANDOMWALK_OFF") != 1)
+        {
+            ClearAllActions();
+            ActionRandomWalk();
+        }
     }
 }
 
