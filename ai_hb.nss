@@ -103,7 +103,6 @@ void main()
         AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_DEAD_BACK, 1.0, 3600.0));
     }
 
-
     if(!GetIsInCombat() && !GetLocalInt(OBJECT_SELF, "RANDOMWALK_OFF") && nOccupied != 1)
     {
         ClearAllActions();

@@ -16,17 +16,17 @@ void main()
         int iEffect2 = GetLocalInt(oObject, "VFX_2");
 
         if (iEffect) {
-            effect eEffect = EffectVisualEffect(iEffect);
+            effect eEffect = SupernaturalEffect(EffectVisualEffect(iEffect));
             ApplyEffectToObject(DURATION_TYPE_PERMANENT, eEffect, oObject);
         }
 
         if (iEffect1) {
-            effect eEffect = EffectVisualEffect(iEffect1);
+            effect eEffect = SupernaturalEffect(EffectVisualEffect(iEffect1));
             ApplyEffectToObject(DURATION_TYPE_PERMANENT, eEffect, oObject);
         }
 
         if (iEffect2) {
-            effect eEffect = EffectVisualEffect(iEffect2);
+            effect eEffect = SupernaturalEffect(EffectVisualEffect(iEffect2));
             ApplyEffectToObject(DURATION_TYPE_PERMANENT, eEffect, oObject);
         }
         oObject = GetNextObjectInArea();
