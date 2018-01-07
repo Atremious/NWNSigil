@@ -627,7 +627,7 @@ int CICraftCheckCraftWand(object oSpellTarget, object oCaster)
     int nMinXPForLevel = ((nHD * (nHD - 1)) / 2) * 1000;
     int nNewXP = FloatToInt(GetXP(oCaster) - nExperienceCost);
 
-    // -------------------------------------------------------------------------
+    /* -------------------------------------------------------------------------
     // check for sufficient XP to cast spell
     // -------------------------------------------------------------------------
      if (nMinXPForLevel > nNewXP || nNewXP == 0 )
@@ -635,6 +635,7 @@ int CICraftCheckCraftWand(object oSpellTarget, object oCaster)
          FloatingTextStrRefOnCreature(3785, oCaster); // Item Creation Failed - Not enough XP
          return TRUE;
     }
+    */
 
     // -------------------------------------------------------------------------
     // Here we craft the wand
