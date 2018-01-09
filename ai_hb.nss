@@ -1,5 +1,4 @@
 #include "nw_i0_generic"
-
 void main()
 {
     // * if not runnning normal or better Ai then exit for performance reasons
@@ -76,37 +75,41 @@ void main()
         }
     }
 
-        int nOccupied;
-
     // Send the user-defined event signal if specified
     if(GetSpawnInCondition(NW_FLAG_HEARTBEAT_EVENT))
     {
         SignalEvent(OBJECT_SELF, EventUserDefined(EVENT_HEARTBEAT));
     }
 
-    if(GetLocalInt(OBJECT_SELF, "SIT") == 1 && nOccupied != 1)
+    if(!GetIsInCombat(OBJECT_SELF))
     {
-        nOccupied = 1;
-        AssignCommand(OBJECT_SELF, ActionSit(GetNearestObjectByTag("SEAT")));
-    }
+        int nOccupied;
 
-    if(GetLocalInt(OBJECT_SELF, "SIT_FLOOR") == 1 && nOccupied != 1)
-    {
-        nOccupied = 1;
-        AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_SIT_CROSS, 1.0, 3600.0));
-    }
+        if(GetLocalInt(OBJECT_SELF, "SIT"))
+        {
+            nOccupied = 1;
+            AssignCommand(OBJECT_SELF, ActionSit(GetNearestObjectByTag("SEAT")));
+        }
 
-    if(GetLocalInt(OBJECT_SELF, "SLEEP") && nOccupied != 1)
-    {
-        nOccupied = 1;
-        ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SLEEP), OBJECT_SELF);
-        AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_DEAD_BACK, 1.0, 3600.0));
-    }
+        if(GetLocalInt(OBJECT_SELF, "SIT_FLOOR") && nOccupied != 1)
+        {
+            nOccupied = 1;
+            AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_SIT_CROSS, 1.0, 3600.0));
+        }
 
-    if(!GetIsInCombat() && !GetLocalInt(OBJECT_SELF, "RANDOMWALK_OFF") && nOccupied != 1)
-    {
-        ClearAllActions();
-        ActionRandomWalk();
+        if(GetLocalInt(OBJECT_SELF, "SLEEP") && nOccupied != 1)
+        {
+            nOccupied = 1;
+            ApplyEffectToObject(DURATION_TYPE_INSTANT, EffectVisualEffect(VFX_IMP_SLEEP), OBJECT_SELF);
+            AssignCommand(OBJECT_SELF, PlayAnimation(ANIMATION_LOOPING_DEAD_BACK, 1.0, 3600.0));
+        }
+
+        if(!GetLocalInt(OBJECT_SELF, "RANDOMWALK_OFF") && !GetIsObjectValid(GetObjectByTag("POST_" + GetTag(OBJECT_SELF)))
+        && nOccupied != 1)
+        {
+            ClearAllActions();
+            ActionRandomWalk();
+        }
     }
 }
 
