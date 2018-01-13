@@ -81,7 +81,7 @@ void main()
         SignalEvent(OBJECT_SELF, EventUserDefined(EVENT_HEARTBEAT));
     }
 
-    if(!GetIsInCombat(OBJECT_SELF))
+    if(!GetIsInCombat(OBJECT_SELF) && !IsInConversation(OBJECT_SELF))
     {
         int nOccupied;
 

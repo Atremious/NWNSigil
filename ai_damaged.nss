@@ -1,24 +1,5 @@
-//:://////////////////////////////////////////////////
-//:: NW_C2_DEFAULT6
-//:: Default OnDamaged handler
-/*
-    If already fighting then ignore, else determine
-    combat round
- */
-//:://////////////////////////////////////////////////
-//:: Copyright (c) 2002 Floodgate Entertainment
-//:: Created By: Naomi Novik
-//:: Created On: 12/22/2002
-//:://////////////////////////////////////////////////
-//:://////////////////////////////////////////////////
-//:: Modified By: Deva Winblood
-//:: Modified On: Jan 17th, 2008
-//:: Added Support for Mounted Combat Feat Support
-//:://////////////////////////////////////////////////
-
 #include "nw_i0_generic"
 #include "x3_inc_horse"
-
 void main()
 {
     object oDamager = GetLastDamager();
