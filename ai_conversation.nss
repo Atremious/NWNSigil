@@ -1,26 +1,11 @@
-//:://////////////////////////////////////////////////
-//:: NW_C2_DEFAULT4
-/*
-  Default OnConversation event handler for NPCs.
-
- */
-//:://////////////////////////////////////////////////
-//:: Copyright (c) 2002 Floodgate Entertainment
-//:: Created By: Naomi Novik
-//:: Created On: 12/22/2002
-//:://////////////////////////////////////////////////
-
 #include "nw_i0_generic"
-
 void main()
 {
-    // * if petrified, jump out
     if (GetHasEffect(EFFECT_TYPE_PETRIFY, OBJECT_SELF) == TRUE)
     {
         return;
     }
 
-    // * If dead, exit directly.
     if (GetIsDead(OBJECT_SELF) == TRUE)
     {
         return;
@@ -36,8 +21,17 @@ void main()
         // Not a match -- start an ordinary conversation
         if (GetCommandable(OBJECT_SELF))
         {
-            ClearActions(CLEAR_NW_C2_DEFAULT4_29);
-            BeginConversation();
+            if(GetLocalString(OBJECT_SELF, "SPEAK") == "")
+            {
+                ClearActions(CLEAR_NW_C2_DEFAULT4_29);
+                BeginConversation();
+            }
+
+            if(GetLocalString(OBJECT_SELF, "SPEAK") != "")
+            {
+                ClearActions(CLEAR_NW_C2_DEFAULT4_29);
+                SpeakString(GetLocalString(OBJECT_SELF, "SPEAK"));
+            }
         }
         else
         // * July 31 2004
