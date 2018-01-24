@@ -1,2 +1,0 @@
-# NWNSigil
-Sigil NWN Account
